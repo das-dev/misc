@@ -1,3 +1,4 @@
+import itertools
 import math
 import numbers
 import reprlib
@@ -45,6 +46,14 @@ class Vector:
     False
     >>> v1 == Vector([3.0, 4.0, 5.0])
     True
+    >>> format(v1)
+    '(3.0, 4.0, 5.0)'
+    >>> format(Vector([1, 1]), 'h')
+    '<(1.4142135623730951, 0.7853981633974483)>'
+    >>> format(Vector([1, 1, 1]), 'h')
+    '<(1.7320508075688772, 0.9553166181245093, 0.7853981633974483)>'
+    >>> format(Vector([2, 2, 2]), '.3eh')
+    '<(3.464e+00, 9.553e-01, 7.854e-01)>'
     """
 
     typecode = 'd'
@@ -111,6 +120,27 @@ class Vector:
 
     def __bool__(self):
         return bool(abs(self))
+
+    def angle(self, n):
+        r = math.sqrt(sum(x * x for x in self[n:]))
+        a = math.atan2(r, self[n-1])
+        if (n == len(self) - 1) and (self[-1] < 0):
+            return math.pi * 2 - a
+        return a
+
+    def angles(self):
+        return (self.angle(n) for n in range(1, len(self)))
+
+    def __format__(self, format_spec=''):
+        if format_spec.endswith('h'):
+            format_spec = format_spec[:-1]
+            coords = itertools.chain([abs(self)], self.angles())
+            outer_format = '<({})>'
+        else:
+            coords = self
+            outer_format = '({})'
+        components = (format(c, format_spec) for c in coords)
+        return outer_format.format(', '.join(components))
 
     @classmethod
     def frombytes(cls, octets):
