@@ -1,5 +1,7 @@
 import warnings
 import osconfeed
+import shelve
+
 
 DB_NAME = 'data/schedule_db'
 CONFERENCE = 'conference.115'
@@ -18,7 +20,7 @@ def load_db(db):
     ...     load_db(db)
     >>> speaker = db['speaker.3471']
     >>> type(speaker)
-    <class '__main__.Record'>
+    <class 'schedule.Record'>
     >>> speaker.name, speaker.twitter
     ('Anna Ravenscroft', 'annaraven')
     >>> db.close()
