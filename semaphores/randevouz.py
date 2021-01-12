@@ -32,7 +32,7 @@ def B(sem1, sem2):
     time.sleep(1)
 
 
-sem1 = WrappedSemaphore(1)
+sem1 = WrappedSemaphore(0)
 sem2 = WrappedSemaphore(0)
 workers = [
     Thread(target=A, args=(sem1, sem2)),
