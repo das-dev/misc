@@ -1,5 +1,6 @@
-""" Implementation of modularization by shared data.
-Based on "On the criteria to be used in decomposing systems into modules" by D. Parnas. """
+""" Implementation of modularization by shared data (very coupled).
+Based on "On the criteria to be used in decomposing systems into modules"
+by D. Parnas. """
 import sys
 from io import StringIO
 from typing import TextIO, List, Tuple
@@ -28,7 +29,7 @@ class CircularShift:
     in the array made up by module 1. It leaves its output in core
     with words in pairs (original line number, starting address). """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.shifts: List[Tuple[int, int]] = []
 
     def make_shifts(self, chars: List[str], index: List[int]) -> None:
@@ -55,8 +56,9 @@ class Alphabetizing:
 
     def order(self, shift: Tuple[int, int]) -> str:
         _, shift_address = shift
-        if shift_address < len(self.chars):
-            return self.chars[shift_address].lower()
+        if shift_address >= len(self.chars):
+            return ''
+        return self.chars[shift_address].lower()
 
     def sort(self, shifts: List[Tuple[int, int]]) -> List[Tuple[int, int]]:
         return list(sorted(shifts, key=self.order))
@@ -71,7 +73,8 @@ class Output:
     and the start of the circular shift may actually
     not be the first word in the line, etc. """
 
-    def __init__(self, chars: List[str], index: List[int], destination: TextIO = sys.stdout):
+    def __init__(self, chars: List[str], index: List[int],
+                 destination: TextIO = sys.stdout):
         self.destination = destination
         self.chars = chars
         self.index = index
@@ -79,11 +82,11 @@ class Output:
     def write(self, shifts: List[Tuple[int, int]]) -> None:
         for lineno, shift_address in shifts:
             start_address = self.index[lineno]
-            first_part = self.chars[start_address:shift_address]
-            shifted = self.chars[shift_address:] + [' '] + first_part
+            first_part = [' '] + self.chars[start_address:shift_address]
+            shifted = self.chars[shift_address:] + first_part
             for address, char in enumerate(self.chars):
                 if address > shift_address and char == '\n':
-                    shifted = self.chars[shift_address:address] + [' '] + first_part
+                    shifted = self.chars[shift_address:address] + first_part
             print(''.join(shifted).strip(), file=self.destination)
 
 
