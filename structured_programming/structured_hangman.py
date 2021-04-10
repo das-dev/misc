@@ -35,6 +35,8 @@ def init_game():
 
     with open(PUZZLE_FILE, 'w') as fl:
         fl.write('\n'.join(puzzles))
+
+
 def ask_user(question):
     answer = input(f'{question} [y/n]? ')
     return answer in {'yes', 'y'}
